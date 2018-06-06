@@ -1,0 +1,153 @@
+﻿@{
+    ViewData["Title"] = "Contact";
+}
+@section scripts
+{
+    <style>
+        .panel-heading
+        {
+            padding-left: unset;
+            padding-right: unset;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px
+        }
+        .panel-default > .panel-heading
+        {
+            background-color: rgb(135, 183, 225);
+            border: none
+        }
+        .panel-body
+        {
+            padding:1px;
+            height: 100%
+        }
+        .row-striped:nth-of-type(even)
+        {
+            background-color: #ffffff
+        }
+        .row-striped:nth-of-type(odd)
+        {
+            background:none
+        }
+        .row-striped:hover
+        {
+            background-color: #e3f2fd
+        }
+    </style>
+    <script>
+    function Procesar()
+    {
+        $.ajax(
+        {
+            type: "get",
+            url: "http://localhost:5000/api/v1/GetDaysOfMonth/" + $("#txtMes").val(),
+            //data: JSON.stringify(GetFormData(form)),
+            dataType: "json",
+            contentType: "application/json",
+            cache: false,
+            error:function(er)
+            {
+                var dd = "";
+            },
+            success:function(result)
+            {
+                $("#txtResultado").val(result);
+
+                $.ajax(
+                {
+                    type: "get",
+                    url: "http://localhost:5000/api/v1/GetCemeteryList",
+                    //data: JSON.stringify(GetFormData(form)),
+                    dataType: "json",
+                    contentType: "application/json",
+                    cache: false,
+                    error:function(er)
+                    {
+                        var dd = "";
+                    },
+                    success:function(result)
+                    {
+                        var grid = $("#dataSource");
+                        var rowTemplate = $("#row");
+                        rowTemplate.remove();
+                        grid.empty();
+
+                        var rowTemplateHtml = rowTemplate.get(0).outerHTML;
+
+                        var ListData = result;
+
+                        ListData.forEach(function(item)
+                        {
+                            var newRow = $(rowTemplateHtml).appendTo(grid);
+                            newRow.get(0).DataRow = item;
+                            newRow.find("#IdCemetery").html(item.IdCemetery);
+                            newRow.find("#Name").html(item.Name);
+                            newRow.find("#Amount").html(item.Amount);
+                            newRow.find("#Date").html(GetFormatDate(item.Date));
+                        });
+                    }
+                });
+            }
+        });
+
+        function GetFormatDate(dates)
+        {
+            var date = new Date(dates);
+            var language = navigator.language;
+            var result = date.toLocaleDateString(language,{month: "2-digit",day: "2-digit",year: "numeric",}).replace(/[^ -~]/g,'');
+
+            return result;
+        };
+    }
+    </script>
+}
+<h2>@ViewData["Title"]</h2>
+<h3>@ViewData["Message"]</h3>
+
+<address>
+    One Microsoft Way<br />
+    Redmond, WA 98052-6399<br />
+    <abbr title="Phone">P:</abbr>
+    425.555.0100
+</address>
+
+<div>
+    <div>
+        <div>
+            <div>Ingrese mes:</div>
+            <input type="text" id="txtMes" name="txtMes">
+            <button type="button" id="btnProcesar" onclick="Procesar();">Procesar</button>
+            <input type="text" id="txtResultado" name="txtResultado" readonly="true">
+        </div>
+        <div class="container panel panel-default">
+            <div class="row panel-heading">
+                <div class="col-sm-3">
+                    <b><p>PaymentId</p></b>
+                </div>
+                <div class="col-sm-3">
+                    <b><p>Name</p></b>
+                </div>
+                <div class="col-sm-3">
+                    <b><p>Amount</p></b>
+                </div>
+                <div class="col-sm-3">
+                    <b><p>Date</p></b>
+                </div>
+            </div>
+            <div id="dataSource" class="panel-body">
+                <div id="row" class="row row-striped">
+                    <div>
+                        <div id="IdCemetery" class="col-sm-3">
+                        </div>
+                        <div id="Name" class="col-sm-3">
+                        </div>
+                        <div id="Amount" class="col-sm-3">
+                        </div>
+                        <div id="Date" class="col-sm-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
