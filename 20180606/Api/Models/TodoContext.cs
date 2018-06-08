@@ -4,12 +4,11 @@ namespace Api.Models
 {
     public class AllContext : DbContext
     {
-        public AllContext(DbContextOptions<AllContext> options)
-            : base(options)
+        public DbSet<AllItem> AllItems {get; set;}
+
+        public AllContext(DbContextOptions<AllContext> options): base(options)
         {
 
         }
-
-        public DbSet<AllItem> AllItems {get; set;}
     }
 }

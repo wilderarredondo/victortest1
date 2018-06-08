@@ -15,7 +15,7 @@ namespace Api.Controllers
         {
             _context = context;
 
-            if (_context.AllItems.Count() == 0)
+            if (_context.AllItems.Any())
             {
                 _context.AllItems.Add(new AllItem { Name = "Item1" });
                 _context.AllItems.Add(new AllItem { Name = "Item2" });
